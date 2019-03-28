@@ -41,6 +41,8 @@ export default class AgendaView extends Component {
     onCalendarToggled: PropTypes.func,
     // callback that gets called on day press
     onDayPress: PropTypes.func,
+    // callback that gets called on day long press
+    onDayLongPress: PropTypes.func,
     // callback that gets called when day changes while scrolling agenda list
     onDaychange: PropTypes.func,
     // specify how each item should be rendered in agenda
@@ -405,6 +407,7 @@ export default class AgendaView extends Component {
               markingType={this.props.markingType}
               removeClippedSubviews={this.props.removeClippedSubviews}
               onDayPress={this._chooseDayFromCalendar.bind(this)}
+              onDayLongPress={this.props.onDayLongPress}
               scrollingEnabled={this.state.calendarScrollable}
               hideExtraDays={this.state.calendarScrollable}
               firstDay={this.props.firstDay}

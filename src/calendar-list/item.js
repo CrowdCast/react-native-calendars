@@ -48,7 +48,7 @@ class CalendarListItem extends Component {
     } else {
       const text = row.toString();
       return (
-        <View style={[{height: this.props.calendarHeight, width: this.props.calendarWidth}, this.style.placeholder]}>
+        <View onStartShouldSetResponder={() => true} style={[{height: this.props.calendarHeight, width: this.props.calendarWidth}, this.style.placeholder]}>
           <Text allowFontScaling={false} style={this.style.placeholderText}>{text}</Text>
         </View>
       );

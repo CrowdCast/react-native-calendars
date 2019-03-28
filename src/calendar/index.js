@@ -174,7 +174,7 @@ class Calendar extends Component {
     const DayComp = this.getDayComponent();
     const date = day.getDate();
     return (
-      <View style={{flex: 1, alignItems: 'center'}} key={id}>
+      <View onStartShouldSetResponder={() => true} style={{flex: 1, alignItems: 'center'}} key={id}>
         <DayComp
           state={state}
           theme={this.props.theme}
@@ -253,7 +253,7 @@ class Calendar extends Component {
       }
     }
     return (
-      <View style={[this.style.container, this.props.style]}>
+      <View onStartShouldSetResponder={() => true} style={[this.style.container, this.props.style]}>
         <CalendarHeader
           theme={this.props.theme}
           hideArrows={this.props.hideArrows}
@@ -268,7 +268,7 @@ class Calendar extends Component {
           onPressArrowLeft={this.props.onPressArrowLeft}
           onPressArrowRight={this.props.onPressArrowRight}
         />
-        <View style={this.style.monthView}>{weeks}</View>
+        <View onStartShouldSetResponder={() => true} style={this.style.monthView}>{weeks}</View>
       </View>);
   }
 }

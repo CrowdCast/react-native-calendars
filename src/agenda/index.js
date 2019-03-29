@@ -106,7 +106,7 @@ export default class AgendaView extends Component {
     this.state = {
       scrollY: new Animated.Value(0),
       calendarIsReady: false,
-      calendarScrollable: true,
+      calendarScrollable: false,
       firstResevationLoad: false,
       selectedDay: parseDate(this.props.selected) || XDate(true),
       topDay: parseDate(this.props.selected) || XDate(true),
@@ -261,35 +261,25 @@ export default class AgendaView extends Component {
 
   chooseDay(d, optimisticScroll) {
     const day = parseDate(d);
-
-    if (!this.props.disableAgenda) {
+    this.setState({
+      calendarScrollable: false,
+      selectedDay: day.clone()
+    });
+    if (this.props.onCalendarToggled) {
+      this.props.onCalendarToggled(false);
+    }
+    if (!optimisticScroll) {
       this.setState({
-        calendarScrollable: false,
-        selectedDay: day.clone(),
+        topDay: day.clone()
       });
-      if (this.props.onCalendarToggled) {
-        this.props.onCalendarToggled(false);
-      }
-      if (!optimisticScroll) {
-        this.setState({
-          topDay: day.clone(),
-        });
-      }
-      this.setScrollPadPosition(this.initialScrollPadPosition(), true);
-      this.calendar.scrollToDay(day, this.calendarOffset(), true);
-      if (this.props.loadItemsForMonth) {
-        this.props.loadItemsForMonth(xdateToData(day));
-      }
-      if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day));
-      }
-    } else {
-      this.setState({
-        selectedDay: day.clone(),
-      });
-      if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day));
-      }
+    }
+    this.setScrollPadPosition(this.initialScrollPadPosition(), true);
+    this.calendar.scrollToDay(day, this.calendarOffset(), true);
+    if (this.props.loadItemsForMonth) {
+      this.props.loadItemsForMonth(xdateToData(day));
+    }
+    if (this.props.onDayPress) {
+      this.props.onDayPress(xdateToData(day));
     }
   }
 

@@ -91,6 +91,8 @@ export default class AgendaView extends Component {
     refreshing: PropTypes.bool,
     // Display loading indicador. Default = false
     displayLoadingIndicator: PropTypes.bool,
+
+    disableAgenda: PropTypes.bool
   };
 
   constructor(props) {
@@ -209,6 +211,13 @@ export default class AgendaView extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.disableAgenda && !prevProps.disableAgenda) {
+      this.onTouchStart();
+      this.onTouchEnd();
+    }
+  }
+
   componentWillMount() {
     this._isMounted = true;
     this.loadReservations(this.props);
@@ -252,25 +261,35 @@ export default class AgendaView extends Component {
 
   chooseDay(d, optimisticScroll) {
     const day = parseDate(d);
-    this.setState({
-      calendarScrollable: false,
-      selectedDay: day.clone()
-    });
-    if (this.props.onCalendarToggled) {
-      this.props.onCalendarToggled(false);
-    }
-    if (!optimisticScroll) {
+
+    if (!this.props.disableAgenda) {
       this.setState({
-        topDay: day.clone()
+        calendarScrollable: false,
+        selectedDay: day.clone(),
       });
-    }
-    this.setScrollPadPosition(this.initialScrollPadPosition(), true);
-    this.calendar.scrollToDay(day, this.calendarOffset(), true);
-    if (this.props.loadItemsForMonth) {
-      this.props.loadItemsForMonth(xdateToData(day));
-    }
-    if (this.props.onDayPress) {
-      this.props.onDayPress(xdateToData(day));
+      if (this.props.onCalendarToggled) {
+        this.props.onCalendarToggled(false);
+      }
+      if (!optimisticScroll) {
+        this.setState({
+          topDay: day.clone(),
+        });
+      }
+      this.setScrollPadPosition(this.initialScrollPadPosition(), true);
+      this.calendar.scrollToDay(day, this.calendarOffset(), true);
+      if (this.props.loadItemsForMonth) {
+        this.props.loadItemsForMonth(xdateToData(day));
+      }
+      if (this.props.onDayPress) {
+        this.props.onDayPress(xdateToData(day));
+      }
+    } else {
+      this.setState({
+        selectedDay: day.clone(),
+      });
+      if (this.props.onDayPress) {
+        this.props.onDayPress(xdateToData(day));
+      }
     }
   }
 

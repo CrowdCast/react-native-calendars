@@ -403,7 +403,7 @@ export default class AgendaView extends Component {
               minDate={this.props.minDate}
               maxDate={this.props.maxDate}
               current={this.currentMonth}
-              markedDates={this.generateMarkings()}
+              markedDates={this.props.markedDates}
               markingType={this.props.markingType}
               removeClippedSubviews={this.props.removeClippedSubviews}
               onDayPress={this._chooseDayFromCalendar.bind(this)}

@@ -259,9 +259,40 @@ export default class AgendaView extends Component {
     this.chooseDay(d, !this.state.calendarScrollable);
   }
 
-  chooseDay(d, optimisticScroll) {
+  _chooseDayFromCalendarLongPress(d) {
+    if (this.props.onDayLongPress) {
+      this.props.onDayLongPress(d);
+    }
+
     if (!this.props.disableAgenda) {
       const day = parseDate(d);
+      this.setState({
+        calendarScrollable: false,
+        selectedDay: day.clone(),
+      });
+      if (this.props.onCalendarToggled) {
+        this.props.onCalendarToggled(false);
+      }
+      this.setState({
+        topDay: day.clone(),
+      });
+
+      this.setScrollPadPosition(this.initialScrollPadPosition(), true);
+      this.calendar.scrollToDay(day, this.calendarOffset(), true);
+      if (this.props.loadItemsForMonth) {
+        this.props.loadItemsForMonth(xdateToData(day));
+      }
+
+      if (this.props.onDayPress) {
+        this.props.onDayPress(xdateToData(day));
+      }
+    }
+  }
+
+
+  chooseDay(d, optimisticScroll) {
+    const day = parseDate(d);
+    if (!this.props.disableAgenda) {
       this.setState({
         calendarScrollable: false,
         selectedDay: day.clone()
@@ -428,7 +459,7 @@ export default class AgendaView extends Component {
               markingType={this.props.markingType}
               removeClippedSubviews={this.props.removeClippedSubviews}
               onDayPress={this._chooseDayFromCalendar.bind(this)}
-              onDayLongPress={this.props.onDayLongPress.bind(this)}
+              onDayLongPress={this._chooseDayFromCalendarLongPress.bind(this)}
               scrollingEnabled={this.state.calendarScrollable}
               hideExtraDays={this.state.calendarScrollable}
               firstDay={this.props.firstDay}

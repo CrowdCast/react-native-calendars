@@ -15,8 +15,8 @@ export default function styleConstructor(theme={}) {
     },
     base: {
       //borderWidth: 1,
-      width: 38,
-      height: FILLER_HEIGHT,
+      width: appStyle.baseDayWidth || 38,
+      height: appStyle.baseDayHeight || FILLER_HEIGHT,
       alignItems: 'center'
     },
     fillers: {

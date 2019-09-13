@@ -217,6 +217,10 @@ export default class AgendaView extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.props.items) {
+      this.loadReservations(this.props);
+    }
+
     if (!prevState.calendarIsReady && this.state.calendarIsReady && !this.props.disableAgenda) {
       this._chooseDayFromCalendar(this.state.selectedDay.clone());
     }
@@ -231,7 +235,7 @@ export default class AgendaView extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this._isMounted = true;
     this.loadReservations(this.props);
   }
@@ -240,14 +244,14 @@ export default class AgendaView extends Component {
     this._isMounted = false;
   }
 
-  componentWillReceiveProps(props) {
+  static getDerivedStateFromProps(props) {
     if (props.items) {
-      this.setState({
+      return { 
         firstResevationLoad: false,
-      });
-    } else {
-      this.loadReservations(props);
+      };
     }
+
+    return null;
   }
 
   enableCalendarScrolling() {

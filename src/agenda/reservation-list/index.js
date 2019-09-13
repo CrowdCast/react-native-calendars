@@ -8,6 +8,7 @@ import Reservation from './reservation';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 
+import isEqual from 'lodash.isequal';
 import dateutils from '../../dateutils';
 import styleConstructor from './style';
 
@@ -41,15 +42,12 @@ class ReactComp extends Component {
     super(props);
     this.styles = styleConstructor(props.theme);
     this.state = {
-      reservations: []
+      reservations: [],
+      topDay: props.topDay,
     };
     this.heights=[];
     this.selectedDay = this.props.selectedDay;
     this.scrollOver = true;
-  }
-
-  componentWillMount() {
-    this.updateDataSource(this.getReservations(this.props).reservations);
   }
 
   updateDataSource(reservations) {
@@ -72,16 +70,19 @@ class ReactComp extends Component {
     this.updateDataSource(reservations.reservations);
   }
 
-  componentWillReceiveProps(props) {
-    if (!dateutils.sameDate(props.topDay, this.props.topDay)) {
-      this.setState({
-        reservations: []
-      }, () => {
-        this.updateReservations(props);
-      });
-    } else {
-      this.updateReservations(props);
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!dateutils.sameDate(prevState.topDay, nextProps.topDay)) {
+      return { reservations: [] };
     }
+    return null;
+  }
+
+  shouldComponentUpdate(prevProps) {
+    if (!isEqual(prevProps.reservations, this.props.reservations)) { 
+      this.updateReservations(this.props);
+      return true;
+    }
+    return false;
   }
 
   onScroll(event) {
@@ -193,7 +194,8 @@ class ReactComp extends Component {
         style={this.props.style}
         contentContainerStyle={this.styles.content}
         renderItem={this.renderRow.bind(this)}
-        data={this.state.reservations}
+        data={this.state.reservations.length > 0 ? 
+          this.state.reservations : this.getReservations(this.props).reservations}
         onScroll={this.onScroll.bind(this)}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={200}

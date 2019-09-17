@@ -126,26 +126,26 @@ class CalendarList extends Component {
     this.listView.scrollToOffset({offset: scrollAmount, animated: false});
   }
 
-  componentWillReceiveProps(props) {
-    const current = parseDate(this.props.current);
-    const nextCurrent = parseDate(props.current);
+  componentDidUpdate(prevProps) {
+    const current = parseDate(prevProps.current);
+    const nextCurrent = parseDate(this.props.current);
     if (nextCurrent && current && nextCurrent.getTime() !== current.getTime()) {
       this.scrollToMonth(nextCurrent);
     }
+  }
 
-    const rowclone = this.state.rows;
+  static getDerivedStateFromProps(props, state) {
+    const rowclone = state.rows;
     const newrows = [];
     for (let i = 0; i < rowclone.length; i++) {
-      let val = this.state.texts[i];
+      let val = state.texts[i];
       if (rowclone[i].getTime) {
         val = rowclone[i].clone();
         val.propbump = rowclone[i].propbump ? rowclone[i].propbump + 1 : 1;
       }
       newrows.push(val);
     }
-    this.setState({
-      rows: newrows
-    });
+    return {rows: newrows};
   }
 
   onViewableItemsChanged({viewableItems}) {
